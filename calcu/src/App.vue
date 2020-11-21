@@ -1,29 +1,29 @@
 <template>
 
-    <div class="result">{{ firstNumber + " " + operand + " " + secondNumber }}</div>
+    <div class="result">{{ firstNumber + " " + operator + " " + secondNumber }}</div>
     <button class="btn" @click="operateSignleX('percent')"><b>%</b></button>
     <button class="btn" id="btn1" @click="reset()"><b>C</b></button>
     <button class="btn" @click="delet()"><i class="material-icons">backspace</i></button>
     <button class="btn" @click="operateSignleX('oneX')"><b>¹/x</b></button>
     <button class="btn" @click="operateSignleX('square')"><b>x²</b></button>
     <button class="btn" @click="operateSignleX('root')"><b>√x</b></button>
-    <button class="btn" @click="getOperand('÷')"><b>÷</b></button>
+    <button class="btn" @click="getOperator('÷')"><b>÷</b></button>
     <button class="btn" @click="getNumber('7')"><b>7</b></button>
     <button class="btn" @click="getNumber('8')"><b>8</b></button>
     <button class="btn" @click="getNumber('9')"><b>9</b></button>
-    <button class="btn" @click="getOperand('x')"><b>x</b></button>
+    <button class="btn" @click="getOperator('x')"><b>x</b></button>
     <button class="btn" @click="getNumber('4')"><b>4</b></button>
     <button class="btn" @click="getNumber('5')"><b>5</b></button>
     <button class="btn" @click="getNumber('6')"><b>6</b></button>
-    <button class="btn" @click="getOperand('-')"><b>-</b></button>
+    <button class="btn" @click="getOperator('-')"><b>-</b></button>
     <button class="btn" @click="getNumber('1')"><b>1</b></button>
     <button class="btn" @click="getNumber('2')"><b>2</b></button>
     <button class="btn" @click="getNumber('3')"><b>3</b></button>
-    <button class="btn" @click="getOperand('+')"><b>+</b></button>
+    <button class="btn" @click="getOperator('+')"><b>+</b></button>
     <button class="btn" @click="operateSignleX('minus')">+/-</button>
     <button class="btn" @click="getNumber('0')"><b>0</b></button>
     <button class="btn" @click="getNumber('.')"><b>.</b></button>
-    <button class="btn" @click="getOperand('=')"><b>=</b></button>
+    <button class="btn" @click="getOperator('=')"><b>=</b></button>
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
     name: 'App',
     data() {
         return {
-            operand: '',
+            operator: '',
             firstNumber: '',
             secondNumber: '',
             first: false,
@@ -66,27 +66,27 @@ export default {
             this.operation = operation;
             if(this.first){
                 this.sendData(this.secondNumber,this.firstNumber,false);
-                this.checkRootNegative(this.secondNumber);
+                this.checkRootNegative(this.secondNumber,operation);
                 this.operationDone = true
             }else{
                 this.sendData(this.firstNumber,this.secondNumber,true);
-                this.checkRootNegative(this.firstNumber);
+                this.checkRootNegative(this.firstNumber,operation);
                 this.operationDone = true
             }
             
         },
-        checkRootNegative(number){
-            if(parseFloat(number) < 0){
+        checkRootNegative(number,operation){
+            if(parseFloat(number) < 0 && operation == "root"){
                 alert("You Can't Take Root to a Negative Number!");
                 this.reset();
             }
         },
         Operation() {
-            if(this.operand == "+"){this.operation =  "add";}
-            else if(this.operand == "x"){this.operation = "multiply";}
-            else if(this.operand == "-"){this.operation = "subtract";}
-            else if(this.operand == "%"){this.operation = "percent";}
-            else if(this.operand == "÷"){this.operation = "divide";}
+            if(this.operator == "+"){this.operation =  "add";}
+            else if(this.operator == "x"){this.operation = "multiply";}
+            else if(this.operator == "-"){this.operation = "subtract";}
+            else if(this.operator == "%"){this.operation = "percent";}
+            else if(this.operator == "÷"){this.operation = "divide";}
         },
         sendData(first,second,bool){
             //posting Data in APi
@@ -110,32 +110,32 @@ export default {
                 this.checkError(Response.data);
             });
         },
-        getOperand(operand) {
+        getOperator(operator) {
             this.operationDone = false;
             if(this.firstNumber == ''){
                 return;
             }
-            if(operand != "="){
-                this.operand = operand;
-            }
             if (!this.operatorDone) {
                 this.first = true;
+                this.operator = operator;
                 this.operatorDone = true;
             } else {
                 this.Operation();
                 this.sendData(this.firstNumber,this.secondNumber,true);
                 this.secondNumber = '';
-                if(operand == "="){
+                if(operator == "="){
                     var temp = this.firstNumber;
                     this.reset();
                     this.firstNumber = temp;
                     this.operationDone = true
+                }else{
+                    this.operator = operator
                 }
 
             }
         },
         reset() {
-            this.operand = '',
+            this.operator = '',
                 this.firstNumber = '',
                 this.secondNumber = '',
                 this.first = false,
@@ -183,6 +183,8 @@ button:hover{
     margin-bottom: 5px;
     width: 230px;
     height: 20px;
+    overflow: auto;
+
 }
 
 #btn1 {
