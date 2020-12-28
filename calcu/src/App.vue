@@ -107,7 +107,7 @@ export default {
                 else{
                     this.secondNumber = Response.data;
                 }
-                this.checkError(Response.data);
+                this.checkError(Response.data, this.operation);
             });
         },
         getOperator(operator) {
@@ -142,8 +142,8 @@ export default {
                 this.result = '',
                 this.operatorDone = false
         },
-        checkError(data){
-            if (data == "E"){
+        checkError(data, operation){
+            if (data == "E" && operation != 'root'){
                 this.reset();
                 alert("Can't Divide By Zero!");
             }
